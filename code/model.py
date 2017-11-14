@@ -7,8 +7,6 @@ import datetime
 from util import utils
 from setting import *
 
-# 交叉熵损失函数。
-softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
 
 class Residual(nn.HybridBlock):
     def __init__(self, channels, same_shape=True, **kwargs):
@@ -78,6 +76,8 @@ def get_net(ctx):
 def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_decay):
     trainer = gluon.Trainer(
         net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': 0.9, 'wd': wd})
+
+    softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
 
     prev_time = datetime.datetime.now()
     for epoch in range(num_epochs):
