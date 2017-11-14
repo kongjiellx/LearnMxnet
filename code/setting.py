@@ -7,7 +7,7 @@ input_str = data_dir + '/' + input_dir + '/'
 model_path = '../model/cifar10.params'
 
 batch_size = 128
-num_epochs = 1
+num_epochs = 30
 learning_rate = 0.1
 
 weight_decay = 5e-4
