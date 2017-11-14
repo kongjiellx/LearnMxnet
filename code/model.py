@@ -73,7 +73,7 @@ def get_net(ctx):
     return net
 
 
-def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_decay, callback):
+def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_decay):
     trainer = gluon.Trainer(
         net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': 0.9, 'wd': wd})
 
