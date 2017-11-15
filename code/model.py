@@ -1,9 +1,7 @@
 from mxnet.gluon import nn
 from mxnet import autograd
 from mxnet import nd
-from mxnet import init
 from mxnet import gluon
-import datetime
 from util import utils
 from setting import *
 
@@ -65,53 +63,22 @@ class ResNet(nn.HybridBlock):
                 print('Block %d output: %s'%(i+1, out.shape))
         return out
 
+class SimpleCnn(nn.HybridBlock):
+    def __init__(self, num_classes, **kwargs):
+        super(SimpleCnn, self).__init__(**kwargs)
+        with self.name_scope():
+            net = self.net = nn.HybridSequential()
+            net.add(nn.Conv2D(channels=32, kernel_size=5, strides=3))
+            net.add(nn.Activation(activation='relu'))
+            net.add(nn.Conv2D(channels=32, kernel_size=3, strides=2))
+            net.add(nn.Activation(activation='relu'))
+            net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
+            net.add(nn.Activation(activation='relu'))
+            net.add(nn.Flatten())
+            net.add(nn.Dense(num_classes))
 
-def get_net(ctx):
-    num_outputs = 10
-    net = ResNet(num_outputs)
-    net.initialize(ctx=ctx, init=init.Xavier())
-    return net
-
-
-def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_decay):
-    trainer = gluon.Trainer(
-        net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': 0.9, 'wd': wd})
-
-    softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
-
-    prev_time = datetime.datetime.now()
-    for epoch in range(num_epochs):
-        train_loss = 0.0
-        train_acc = 0.0
-        if epoch > 0 and epoch % lr_period == 0:
-            trainer.set_learning_rate(trainer.learning_rate * lr_decay)
-        num = 0
-        for data, label in train_data:
-            label = label.as_in_context(ctx)
-            with autograd.record():
-                output = net(data.as_in_context(ctx))
-                loss = softmax_cross_entropy(output, label)
-            loss.backward()
-            trainer.step(batch_size)
-            train_loss += nd.mean(loss).asscalar()
-            train_acc += utils.accuracy(output, label)
-            num += 1
-            if num % 1000 == 0:
-                print(num)
-
-        cur_time = datetime.datetime.now()
-        h, remainder = divmod((cur_time - prev_time).seconds, 3600)
-        m, s = divmod(remainder, 60)
-        time_str = "Time %02d:%02d:%02d" % (h, m, s)
-        if valid_data is not None:
-            valid_acc = utils.evaluate_accuracy(valid_data, net, ctx)
-            epoch_str = ("Epoch %d. Loss: %f, Train acc %f, Valid acc %f, "
-                         % (epoch, train_loss / len(train_data),
-                            train_acc / len(train_data), valid_acc))
-        else:
-            epoch_str = ("Epoch %d. Loss: %f, Train acc %f, "
-                         % (epoch, train_loss / len(train_data),
-                            train_acc / len(train_data)))
-        prev_time = cur_time
-        print(epoch_str + time_str + ', lr ' + str(trainer.learning_rate))
-        net.save_params(model_path)
+    def hybrid_forward(self, F, x):
+        out = x
+        for b in self.net:
+            out = b(out)
+        return out

@@ -9,6 +9,7 @@ model_path = '../model/cifar10.params'
 batch_size = 128
 num_epochs = 30
 learning_rate = 0.1
+num_outputs = 10
 
 weight_decay = 5e-4
 lr_period = 80
