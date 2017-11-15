@@ -69,11 +69,15 @@ class SimpleCnn(nn.HybridBlock):
         with self.name_scope():
             net = self.net = nn.HybridSequential()
             net.add(nn.Conv2D(channels=32, kernel_size=5, strides=3))
+            net.add(nn.BatchNorm())
             net.add(nn.Activation(activation='relu'))
             net.add(nn.Conv2D(channels=32, kernel_size=3, strides=2))
+            net.add(nn.BatchNorm())
             net.add(nn.Activation(activation='relu'))
             net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
+            net.add(nn.BatchNorm())
             net.add(nn.Activation(activation='relu'))
+            net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
             net.add(nn.Flatten())
             net.add(nn.Dense(num_classes))
 
