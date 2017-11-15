@@ -4,6 +4,7 @@
 from model import SimpleCnn, ResNet
 import mxnet as mx
 from mxnet.gluon.data import vision
+from mxnet import init
 from setting import *
 from load_data import load_data, transform_train, transform_test
 from util import utils
