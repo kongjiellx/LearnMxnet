@@ -11,8 +11,10 @@ import pandas as pd
 
 if __name__ == "__main__":
     ctx = utils.try_gpu()
-    net = get_net(ctx)
+    net = SimpleCnn(num_outputs)
+    net.initialize(ctx=ctx, init=init.Xavier())
     net.hybridize()
+
     net.load_params(model_path, ctx)
     test_data = load_data(input_str + 'test', transform_test, False)
     preds = []
