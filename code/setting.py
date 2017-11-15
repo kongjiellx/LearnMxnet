@@ -13,3 +13,5 @@ num_outputs = 10
 
 lr_period = 10
 lr_decay = 0.5
+weight_decay = 5e-4
+
