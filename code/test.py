@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from model import get_net
+from model import SimpleCnn, ResNet
 import mxnet as mx
 from mxnet.gluon.data import vision
 from setting import *
