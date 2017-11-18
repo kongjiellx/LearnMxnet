@@ -63,21 +63,31 @@ class ResNet(nn.HybridBlock):
                 print('Block %d output: %s'%(i+1, out.shape))
         return out
 
+
 class SimpleCnn(nn.HybridBlock):
     def __init__(self, num_classes, **kwargs):
         super(SimpleCnn, self).__init__(**kwargs)
         with self.name_scope():
             net = self.net = nn.HybridSequential()
-            net.add(nn.Conv2D(channels=32, kernel_size=5, strides=3))
+            for _ in range(3):
+                net.add(nn.Conv2D(channels=32, kernel_size=1, strides=1))
+                net.add(nn.BatchNorm())
+                net.add(nn.Activation(activation='relu'))
+            net.add(nn.Conv2D(channels=64, kernel_size=2, strides=1))
             net.add(nn.BatchNorm())
             net.add(nn.Activation(activation='relu'))
-            net.add(nn.Conv2D(channels=32, kernel_size=3, strides=2))
+            for _ in range(2):
+                net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
+                net.add(nn.BatchNorm())
+                net.add(nn.Activation(activation='relu'))
+            net.add(nn.Conv2D(channels=128, kernel_size=2, strides=1))
             net.add(nn.BatchNorm())
             net.add(nn.Activation(activation='relu'))
-            net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
-            net.add(nn.BatchNorm())
-            net.add(nn.Activation(activation='relu'))
-            net.add(nn.Conv2D(channels=64, kernel_size=1, strides=1))
+            for _ in range(2):
+                net.add(nn.Conv2D(channels=128, kernel_size=1, strides=1))
+                net.add(nn.BatchNorm())
+                net.add(nn.Activation(activation='relu'))
+            net.add(nn.AvgPool2D(pool_size=8))
             net.add(nn.Flatten())
             net.add(nn.Dense(num_classes))
 
