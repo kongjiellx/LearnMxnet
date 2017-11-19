@@ -14,7 +14,7 @@ from setting import *
 def transform_train(data, label):
     im = data.astype('float32') / 255
     auglist = image.CreateAugmenter(data_shape=(3, 32, 32), resize=0,
-                        rand_crop=False, rand_resize=False, rand_mirror=True,
+                        rand_crop=True, rand_resize=True, rand_mirror=True,
                         mean=np.array([0.4914, 0.4822, 0.4465]),
                         std=np.array([0.2023, 0.1994, 0.2010]),
                         brightness=0, contrast=0,
