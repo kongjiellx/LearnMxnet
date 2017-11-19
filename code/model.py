@@ -12,7 +12,7 @@ class Residual(nn.HybridBlock):
         self.same_shape = same_shape
         with self.name_scope():
             strides = 1 if same_shape else 2
-            self.conv1 = nn.Conv2D(channels, kernel_size=1,
+            self.conv1 = nn.Conv2D(channels, kernel_size=3,
                                   strides=strides)
             self.bn1 = nn.BatchNorm()
             self.conv2 = nn.Conv2D(channels, kernel_size=3, padding=1)
@@ -36,21 +36,21 @@ class ResNet(nn.HybridBlock):
         with self.name_scope():
             net = self.net = nn.HybridSequential()
             # block 1
-            net.add(nn.Conv2D(channels=32, kernel_size=3, strides=1, padding=1))
+            net.add(nn.Conv2D(channels=64, kernel_size=3, strides=1, padding=1))
             net.add(nn.BatchNorm())
-            net.add(nn.Activation(activation='relu'))
+            #net.add(nn.Activation(activation='relu'))
             for _ in range(3):
-                net.add(Residual(channels=32))
-            net.add(Residual(channels=64, same_shape=False))
-            for _ in range(2):
                 net.add(Residual(channels=64))
             net.add(Residual(channels=128, same_shape=False))
-            for _ in range(2):
+            for _ in range(3):
                 net.add(Residual(channels=128))
-            #net.add(Residual(channels=256, same_shape=False))
-            #for _ in range(5):
-            #    net.add(Residual(channels=256))
-            net.add(nn.AvgPool2D(pool_size=8))
+            net.add(Residual(channels=256, same_shape=False))
+            for _ in range(5):
+                net.add(Residual(channels=256))
+            net.add(Residual(channels=512, same_shape=False))
+            for _ in range(2):
+                net.add(Residual(channels=512))
+            net.add(nn.AvgPool2D(pool_size=4))
             net.add(nn.Flatten())
             net.add(nn.Dense(num_classes))
 
