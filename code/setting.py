@@ -11,7 +11,7 @@ num_epochs = 100
 learning_rate = 0.1
 num_outputs = 10
 
-lr_period = 10
-lr_decay = 0.5
-weight_decay = 5e-4
+lr_period = 50
+lr_decay = 0.2
+weight_decay = 1e-4
 

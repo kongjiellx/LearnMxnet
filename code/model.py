@@ -36,21 +36,22 @@ class ResNet(nn.HybridBlock):
         with self.name_scope():
             net = self.net = nn.HybridSequential()
             # block 1
-            net.add(nn.Conv2D(channels=64, kernel_size=3, strides=1, padding=1))
+            net.add(nn.Conv2D(channels=32, kernel_size=3, strides=1, padding=1))
             net.add(nn.BatchNorm())
-            #net.add(nn.Activation(activation='relu'))
-            for _ in range(1):
+            net.add(nn.Activation(activation='relu'))
+            # block 2
+            for _ in range(3):
+                net.add(Residual(channels=32))
+            # block 3
+            net.add(Residual(channels=64, same_shape=False))
+            for _ in range(2):
                 net.add(Residual(channels=64))
+            # block 4
             net.add(Residual(channels=128, same_shape=False))
-            for _ in range(1):
+            for _ in range(2):
                 net.add(Residual(channels=128))
-            net.add(Residual(channels=256, same_shape=False))
-            for _ in range(1):
-                net.add(Residual(channels=256))
-            net.add(Residual(channels=512, same_shape=False))
-            for _ in range(1):
-                net.add(Residual(channels=512))
-            net.add(nn.AvgPool2D(pool_size=4))
+            # block 5
+            net.add(nn.AvgPool2D(pool_size=8))
             net.add(nn.Flatten())
             net.add(nn.Dense(num_classes))
 
