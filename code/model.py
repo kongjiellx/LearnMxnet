@@ -12,7 +12,7 @@ class Residual(nn.HybridBlock):
         self.same_shape = same_shape
         with self.name_scope():
             strides = 1 if same_shape else 2
-            self.conv1 = nn.Conv2D(channels, kernel_size=3,
+            self.conv1 = nn.Conv2D(channels, kernel_size=3, padding=1,
                                   strides=strides)
             self.bn1 = nn.BatchNorm()
             self.conv2 = nn.Conv2D(channels, kernel_size=3, padding=1)
