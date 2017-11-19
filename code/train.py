@@ -6,7 +6,7 @@ from mxnet import nd
 from mxnet.gluon.data import vision
 import numpy as np
 from util import utils
-from model import ResNet, SimpleCnn
+from model import ResNet, SimpleCnn, DenseNet
 from setting import *
 import datetime
 from load_data import load_data, transform_train, transform_test
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     valid_data = load_data(input_str + 'valid', transform_test, True)
 
     ctx = utils.try_gpu()
-    net = SimpleCnn(num_outputs)
+    net = DenseNet(num_outputs)
     net.initialize(ctx=ctx, init=init.Xavier())
     net.hybridize()
     train(net, train_data, valid_data, num_epochs, learning_rate,

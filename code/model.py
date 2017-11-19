@@ -64,6 +64,64 @@ class ResNet(nn.HybridBlock):
         return out
 
 
+class DenseBlock(nn.HybridBlock):
+    def __init__(self, channels, **kwargs):
+        super(DenseBlock, self).__init__(**kwargs)
+        with self.name_scope():
+            self.conv1 = nn.Conv2D(channels, kernel_size=3, padding=1, strides=1, use_bias=False)
+            self.bn1 = nn.BatchNorm()
+
+    def hybrid_forward(self, F, x):
+        out = self.conv1(F.relu(self.bn1(x)))
+        return F.concat(out, x)
+
+
+class TransitionBlock(nn.HybridBlock):
+    def __init__(self, channels, **kwargs):
+        super(TransitionBlock, self).__init__(**kwargs)
+        with self.name_scope():
+            self.conv1 = nn.Conv2D(channels, kernel_size=3, padding=1, strides=1, use_bias=False)
+            self.bn1 = nn.BatchNorm()
+            self.pool1 = nn.AvgPool2D(pool_size=2, strides=(2, 2))
+
+    def hybrid_forward(self, F, x):
+        out = self.conv1(F.relu(self.bn1(x)))
+        out = self.pool1(out)
+        return out
+
+
+class DenseNet(nn.HybridBlock):
+    def __init__(self, num_classes, **kwargs):
+        super(DenseNet, self).__init__(**kwargs)
+        with self.name_scope():
+            net = self.net = nn.HybridSequential()
+            net.add(nn.Conv2D(channels=16, kernel_size=3, strides=1, padding=1, use_bias=False))
+            num_channles = 16
+            for _ in range(12):
+                net.add(DenseBlock(channels=12))
+                num_channles += 12
+            net.add(TransitionBlock(channels=num_channles))
+            for _ in range(12):
+                net.add(DenseBlock(channels=12))
+                num_channles += 12
+            net.add(TransitionBlock(channels=num_channles))
+            for _ in range(12):
+                net.add(DenseBlock(channels=12))
+            net.add(nn.BatchNorm())
+            net.add(nn.Activation(activation='relu'))
+            net.add(nn.AvgPool2D(pool_size=8))
+            net.add(nn.Flatten())
+            net.add(nn.Dense(num_classes))
+
+
+    def hybrid_forward(self, F, x):
+        out = x
+        for i, b in enumerate(self.net):
+            out = b(out)
+            print('Block %d output: %s'%(i+1, out.shape))
+        return out
+
+
 class SimpleCnn(nn.HybridBlock):
     def __init__(self, num_classes, **kwargs):
         super(SimpleCnn, self).__init__(**kwargs)
@@ -93,6 +151,7 @@ class SimpleCnn(nn.HybridBlock):
 
     def hybrid_forward(self, F, x):
         out = x
-        for b in self.net:
+        for i, b in enumerate(self.net):
             out = b(out)
+            print('Block %d output: %s'%(i+1, out.shape))
         return out
