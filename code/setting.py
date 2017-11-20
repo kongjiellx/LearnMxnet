@@ -6,8 +6,8 @@ test_dir = 'test_tiny'
 input_str = data_dir + input_dir + '/'
 model_path = '../model/cifar10.params'
 
-batch_size = 64
-num_epochs = 100
+batch_size = 128
+num_epochs = 220
 learning_rate = 0.1
 num_outputs = 10
 
