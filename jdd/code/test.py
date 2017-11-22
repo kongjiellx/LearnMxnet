@@ -5,29 +5,32 @@ from model import SimpleCnn, ResNet, DenseNet
 import mxnet as mx
 from mxnet.gluon.data import vision
 from mxnet import init
+from mxnet import nd
 from setting import *
 from load_data import load_data, transform_train, transform_test
 from util import utils
-import pandas as pd
 
 if __name__ == "__main__":
     ctx = utils.try_gpu()
-    net = DenseNet(num_outputs)
+    net = ResNet(num_outputs)
     net.initialize(ctx=ctx, init=init.Xavier())
     net.hybridize()
 
     net.load_params(model_path, ctx)
-    test_data = load_data(input_str + 'test', transform_test, False)
+    test_data = load_data(data_dir + 'test_A', transform_test, False)
+    files = []
+    for i in test_data._dataset.items:
+        files.append(i[0].split("/")[-1].split(".")[0])
     preds = []
     for data, label in test_data:
-        output = net(data.as_in_context(ctx))
-        preds.extend(output.argmax(axis=1).astype(int).asnumpy())
+        output = nd.softmax(net(data.as_in_context(ctx)))
+        preds.extend(output)
 
-    sorted_ids = list(range(1, 300000 + 1))
-    sorted_ids.sort(key = lambda x:str(x))
+    assert len(files) == len(preds)
+    fwp = open('submission.csv', 'w')
+    data_labels = zip(files, preds)
+    for data_label in data_labels:
+        for i in range(1, 31):
+            fwp.write(data_label[0] + ',' + str(i) + ',' + ('%.10f' % data_label[1][i-1].asnumpy()) + '\n')
+    fwp.close()
 
-    train_ds = vision.ImageFolderDataset(input_str + 'train',
-                                           flag=1, transform=transform_train)
-    df = pd.DataFrame({'id': sorted_ids, 'label': preds})
-    df['label'] = df['label'].apply(lambda x: train_ds.synsets[x])
-    df.to_csv('submission.csv', index=False)
