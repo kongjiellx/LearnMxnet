@@ -55,7 +55,7 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
         net.save_params(model_path)
 
 if __name__ == '__main__':
-    train_data = load_data(input_str + 'train', transform_train, True)
+    train_data = load_data(data_dir + 'train', transform_train, True)
 
     ctx = utils.try_gpu()
     net = ResNet(num_outputs)
