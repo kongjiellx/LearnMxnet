@@ -62,7 +62,7 @@ if __name__ == '__main__':
     pretrained_net = models.resnet50_v2(pretrained=True, ctx=ctx)
     net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.features = pretrained_net.features
-    net.output.initialize(ctx=ctx, init.Xavier())
+    net.output.initialize(ctx=ctx, init=init.Xavier())
     net.hybridize()
     train(net, train_data, None, num_epochs, learning_rate,
             weight_decay, ctx, lr_period, lr_decay)
