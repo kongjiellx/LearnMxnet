@@ -59,8 +59,8 @@ if __name__ == '__main__':
     train_data = load_data(data_dir + 'train', transform_train, True)
 
     ctx = utils.try_gpu()
-    pretrained_net = models.resnet50_v2(pretrained=True)
-    net = models.resnet50_v2(classes=num_outputs)
+    pretrained_net = models.resnet50_v2(pretrained=True, ctx=ctx)
+    net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.features = pretrained_net.features
     net.output.initialize(init.Xavier())
     net.hybridize()
