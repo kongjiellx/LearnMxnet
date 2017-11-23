@@ -25,12 +25,14 @@ if __name__ == "__main__":
     for data, label in test_data:
         output = nd.softmax(net(data.as_in_context(ctx)))
         preds.extend(output)
-
     assert len(files) == len(preds)
+
+    train_ds = vision.ImageFolderDataset(data_dir + 'train',
+                                           flag=1, transform=transform_train)
     fwp = open('submission.csv', 'w')
     data_labels = zip(files, preds)
     for data_label in data_labels:
-        for i in range(1, 31):
-            fwp.write(data_label[0] + ',' + str(i) + ',' + ('%.10f' % data_label[1][i-1].asnumpy()) + '\n')
+        for i in range(0, 30):
+            fwp.write(data_label[0] + ',' + train_ds.synset[i] + ',' + ('%.10f' % data_label[1][i].asnumpy()) + '\n')
     fwp.close()
 
