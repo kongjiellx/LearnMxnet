@@ -33,6 +33,6 @@ if __name__ == "__main__":
     data_labels = zip(files, preds)
     for data_label in data_labels:
         for i in range(0, 30):
-            fwp.write(data_label[0] + ',' + train_ds.synset[i] + ',' + ('%.10f' % data_label[1][i].asnumpy()) + '\n')
+            fwp.write(data_label[0] + ',' + train_ds.synsets[i] + ',' + ('%.10f' % data_label[1][i].asnumpy()) + '\n')
     fwp.close()
 
