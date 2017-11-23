@@ -4,6 +4,7 @@ from mxnet import image
 from mxnet import init
 from mxnet import nd
 from mxnet.gluon.data import vision
+from mxnet.gluon.model_zoo import vision as models
 import numpy as np
 from util import utils
 from model import ResNet, SimpleCnn, DenseNet
@@ -58,8 +59,10 @@ if __name__ == '__main__':
     train_data = load_data(data_dir + 'train', transform_train, True)
 
     ctx = utils.try_gpu()
-    net = ResNet(num_outputs)
-    net.initialize(ctx=ctx, init=init.Xavier())
+    pretrained_net = models.resnet50_v2(pretrained=True)
+    net = models.resnet50_v2(classes=num_outputs)
+    net.features = pretrained_net.features
+    net.output.initialize(init,Xavier())
     net.hybridize()
     train(net, train_data, None, num_epochs, learning_rate,
             weight_decay, ctx, lr_period, lr_decay)

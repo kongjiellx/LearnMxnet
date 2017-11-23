@@ -12,8 +12,8 @@ from util import utils
 from setting import *
 
 def transform_train(data, label):
-    im = image.imresize(data.astype('float32') / 255, 96, 96)
-    auglist = image.CreateAugmenter(data_shape=(3, 96, 96), resize=0,
+    im = image.imresize(data.astype('float32') / 255, 224, 224)
+    auglist = image.CreateAugmenter(data_shape=(3, 224, 224), resize=0,
                         rand_crop=True, rand_resize=True, rand_mirror=True,
                         mean=None, std=None,
                         brightness=0, contrast=0,
@@ -27,7 +27,7 @@ def transform_train(data, label):
 
 # 测试时，无需对图像做标准化以外的增强数据处理。
 def transform_test(data, label):
-    im = image.imresize(data.astype('float32') / 255, 96, 96)
+    im = image.imresize(data.astype('float32') / 255, 224, 224)
     im = nd.transpose(im, (2,0,1))
     return (im, nd.array([label]).asscalar().astype('float32'))
 
