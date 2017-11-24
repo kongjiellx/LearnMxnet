@@ -16,6 +16,8 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
     trainer = gluon.Trainer(
             net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': 0.9, 'wd': wd})
 
+    net.collect_params().reset_ctx(ctx)
+    net.hybridize()
     softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
 
     prev_time = datetime.datetime.now()
@@ -60,7 +62,6 @@ if __name__ == '__main__':
     net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.features = pretrained_net.features
     net.output.initialize(ctx=ctx, init=init.Xavier())
-    net.hybridize()
     train(net, train_data, None, num_epochs, learning_rate,
             weight_decay, ctx, lr_period, lr_decay)
     net.save_params(model_path)
