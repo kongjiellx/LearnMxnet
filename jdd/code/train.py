@@ -24,8 +24,8 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
         train_acc = 0.0
         if epoch > 0 and epoch % lr_period == 0:
             trainer.set_learning_rate(trainer.learning_rate * lr_decay)
-        num = 0
         for data, label in train_data:
+            print("epoch")
             label = label.as_in_context(ctx)
             with autograd.record():
                 output = net(data.as_in_context(ctx))
@@ -34,9 +34,6 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
             trainer.step(batch_size)
             train_loss += nd.mean(loss).asscalar()
             train_acc += utils.accuracy(output, label)
-            num += 1
-            if num % 1000 == 0:
-                print(num)
 
         cur_time = datetime.datetime.now()
         h, remainder = divmod((cur_time - prev_time).seconds, 3600)
