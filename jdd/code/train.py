@@ -63,6 +63,6 @@ if __name__ == '__main__':
     net.output.initialize(ctx=ctx, init=init.Xavier())
     train(net, train_data, None, num_epochs, learning_rate,
             weight_decay, ctx, lr_period, lr_decay)
-    net.save_params(model_path)
+    net.collect_params.save(model_path)
 
 
