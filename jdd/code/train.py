@@ -51,7 +51,7 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
                             train_acc / len(train_data)))
         prev_time = cur_time
         print(epoch_str + time_str + ', lr ' + str(trainer.learning_rate))
-        net.collect_params.save(model_path)
+        net.collect_params().save(model_path)
 
 if __name__ == '__main__':
     train_data = load_data(data_dir + 'train', transform_train, True)
