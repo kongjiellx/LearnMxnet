@@ -12,11 +12,12 @@ from load_data import load_data, transform_train, transform_test
 from util import utils
 
 if __name__ == "__main__":
-    ctx = utils.try_gpu()
+    #ctx = utils.try_gpu()
+    ctx = mx.cpu()
     net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.hybridize()
 
-    net.collect_params().load(model_path, ctx=ctx)
+    net.collect_params().load(file_name=model_path, ctx=ctx)
     test_data = load_data(data_dir + 'test_A', transform_test, False)
     files = []
     for i in test_data._dataset.items:
