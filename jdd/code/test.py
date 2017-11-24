@@ -4,6 +4,7 @@
 from model import SimpleCnn, ResNet, DenseNet
 import mxnet as mx
 from mxnet.gluon.data import vision
+from mxnet.gluon.model_zoo import vision as models
 from mxnet import init
 from mxnet import nd
 from setting import *
@@ -12,8 +13,7 @@ from util import utils
 
 if __name__ == "__main__":
     ctx = utils.try_gpu()
-    net = ResNet(num_outputs)
-    net.initialize(ctx=ctx, init=init.Xavier())
+    net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.hybridize()
 
     net.load_params(model_path, ctx)
