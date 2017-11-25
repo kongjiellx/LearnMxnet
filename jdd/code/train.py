@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     ctx = utils.try_gpu()
     pretrained_net = models.resnet50_v2(pretrained=True, ctx=ctx)
-    net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
+    net = models.resnet50_v2(prefix="resnetv20_", classes=num_outputs, ctx=ctx)
     net.features = pretrained_net.features
     net.output.initialize(init=init.Xavier(), ctx=ctx)
     train(net, train_data, None, num_epochs, learning_rate,

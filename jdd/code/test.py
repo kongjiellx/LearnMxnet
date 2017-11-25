@@ -17,7 +17,7 @@ if __name__ == "__main__":
     net = models.resnet50_v2(classes=num_outputs, ctx=ctx)
     net.hybridize()
 
-    net.collect_params().load(file_name=model_path, ctx=ctx)
+    net.collect_params().load(filename=model_path, ctx=ctx)
     test_data = load_data(data_dir + 'test_A', transform_test, False)
     files = []
     for i in test_data._dataset.items:
