@@ -55,13 +55,14 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
 
 if __name__ == '__main__':
     train_data = load_data(data_dir + 'train', transform_train, True)
+    valid_data = load_data(input_str + 'valid', transform_test, True)
 
     ctx = utils.try_gpu()
     pretrained_net = models.resnet50_v2(pretrained=True, ctx=ctx)
     net = models.resnet50_v2(prefix="resnetv20_", classes=num_outputs, ctx=ctx)
     net.features = pretrained_net.features
     net.output.initialize(init=init.Xavier(), ctx=ctx)
-    train(net, train_data, None, num_epochs, learning_rate,
+    train(net, train_data, valid_data, num_epochs, learning_rate,
             weight_decay, ctx, lr_period, lr_decay)
 
 

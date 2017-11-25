@@ -15,7 +15,8 @@ def transform_train(data, label):
     im = image.imresize(data.astype('float32') / 255, 224, 224)
     auglist = image.CreateAugmenter(data_shape=(3, 224, 224), resize=0,
                         rand_crop=True, rand_resize=True, rand_mirror=True,
-                        mean=None, std=None,
+                        mean=np.array([0.485, 0.456, 0.406]),
+                        std=np.array([0.229, 0.224, 0.225]),
                         brightness=0, contrast=0,
                         saturation=0, hue=0,
                         pca_noise=0, rand_gray=0, inter_method=2)
@@ -28,6 +29,11 @@ def transform_train(data, label):
 # 测试时，无需对图像做标准化以外的增强数据处理。
 def transform_test(data, label):
     im = image.imresize(data.astype('float32') / 255, 224, 224)
+    auglist = image.CreateAugmenter(data_shape=(3, 224, 224),
+                        mean=np.array([0.485, 0.456, 0.406]),
+                        std=np.array([0.229, 0.224, 0.225]))
+    for aug in auglist:
+        im = aug(im)
     im = nd.transpose(im, (2,0,1))
     return (im, nd.array([label]).asscalar().astype('float32'))
 
