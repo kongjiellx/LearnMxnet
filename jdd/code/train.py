@@ -55,7 +55,7 @@ def train(net, train_data, valid_data, num_epochs, lr, wd, ctx, lr_period, lr_de
 
 if __name__ == '__main__':
     train_data = load_data(data_dir + 'train', transform_train, True)
-    valid_data = load_data(input_str + 'valid', transform_test, True)
+    valid_data = load_data(data_dir + 'valid', transform_test, True)
 
     ctx = utils.try_gpu()
     pretrained_net = models.resnet50_v2(pretrained=True, ctx=ctx)
